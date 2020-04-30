@@ -6,6 +6,8 @@ pub enum MyError {
     TypeError(String),
     #[error("InternalServerError: {0}")]
     InternalServerError(String),
+    #[error("NoneError: {0}")]
+    NoneError(String),
 }
 
 impl MyError {
@@ -15,5 +17,9 @@ impl MyError {
 
     pub fn internal_server_error(s: &str) -> MyError {
         MyError::InternalServerError(s.to_string())
+    }
+
+    pub fn none_error(s: &str) -> MyError {
+        MyError::NoneError(s.to_string())
     }
 }
