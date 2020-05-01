@@ -18,9 +18,8 @@ impl User {
         Self { name }
     }
 
-    pub fn change_name(&mut self, name: Name) -> Result<()> {
+    pub fn change_name(&mut self, name: Name) {
         self.name = name;
-        Ok(())
     }
 }
 
