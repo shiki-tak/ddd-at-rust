@@ -6,7 +6,7 @@ use derive_more::Display;
 use ulid::Ulid;
 use serde::{de, Serialize, Serializer};
 
-#[derive(Copy, Clone, Debug, PartialEq, Display)]
+#[derive(Copy, Clone, Debug, PartialEq, Display, Eq, Hash)]
 pub struct UserId(Ulid);
 
 impl UserId {

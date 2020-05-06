@@ -10,6 +10,10 @@ edition = "2018"
 name = "mock_server"
 path = "src/app/mock_server.rs"
 
+[[bin]]
+name = "rdb_server"
+path = "src/app/rdb_server.rs"
+
 [dependencies]
 anyhow = "1.0.28"
 derive-getters = "0.1.0"
