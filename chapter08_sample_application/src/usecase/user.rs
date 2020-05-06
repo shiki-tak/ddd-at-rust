@@ -6,19 +6,48 @@ use crate::usecase::{CreateUserCommand, DeleteUserCommand, UpdateUserCommand, Us
 
 pub trait UserApplicationService: HaveUserRepository + std::marker::Sized {
     fn register(&self, cmd: CreateUserCommand) -> Result<()> {
-        unimplemented!();
+        let user = User::new(cmd.name().clone(), cmd.mail_address().clone());
+        if exists(self, &user)? {
+            bail!(MyError::internal_server_error("user already exist"))
+        }
+        self.provide_user_repository().save(user)
     }
 
     fn get_by_name(&self, name: Name) -> Result<UserData> {
-        unimplemented!();
+        let user = self.provide_user_repository()
+            .find_by_name(name)?
+            .ok_or_else(|| MyError::internal_server_error("user can't find"))?;
+
+        Ok(user.into())
     }
 
     fn update(&self, cmd: UpdateUserCommand) -> Result<()> {
-        unimplemented!();
+        let mut user = self.provide_user_repository()
+            .find_by_id(cmd.id().clone())?
+            .ok_or_else(|| MyError::internal_server_error("user can't find"))?;
+
+        if let Some(name) = cmd.name() {
+            user.change_name(name.clone());
+            if exists(self, &user)? {
+                bail!(MyError::internal_server_error("user already exist"));
+            }
+        }
+
+        if let Some(mail_address) = cmd.mail_address() {
+            user.change_mail_address(mail_address.clone());
+        }
+
+        self.provide_user_repository().save(user)?;
+        Ok(())
     }
 
     fn delete(&self, cmd: DeleteUserCommand) -> Result<()> {
-        unimplemented!();
+        let target_id = *cmd.id();
+        let user = self.provide_user_repository()
+            .find_by_id(target_id)?
+            .ok_or_else(|| MyError::internal_server_error("user can't find"))?;
+        self.provide_user_repository().delete(user)?;
+        Ok(())
     }
 }
 
